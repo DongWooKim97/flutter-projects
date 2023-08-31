@@ -21,4 +21,8 @@ start - 시작 , end - 끝 , center - 가운데,
 spaceBetween - 위젯과 위젯 사이 공간 동일
 spaceEvenly - 위젯을 같은 간격으로 배치하지만 끝과 끝에도 위젯이 아닌 빈 간격으로 시작.
 spaceAround -spaceEvenly + 끝과 끝의 간격 1/2
+
+MediaQuery.of(Context)는 내가 사용하는 기종의 관련된 것을 가져올 수 있음
+= 앱 화면 크기 알아내는 것과 동일
+[url](https://m.blog.naver.com/chandong83/221890678439)
 ```

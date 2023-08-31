@@ -10,13 +10,15 @@ class HomeScreen extends StatelessWidget {
         bottom : false,
         child: Container(
           color: Colors.black,
-          child: Row(
-            // MainAxisAlignment - 주축정렬 , 핸드폰은 세로가 기준 (위/아래)
-            // start - 시작 , end - 끝 , center - 가운데,
-            // spaceBetween - 위젯과 위젯 사이 공간 동일
-            // spaceEvenly - 위젯을 같은 간격으로 배치하지만 끝과 끝에도 위젯이 아닌 빈 간격으로 시작.
-            // spaceAround -spaceEvenly + 끝과 끝의 간격 1/2
-            mainAxisAlignment: MainAxisAlignment.spaceAround,
+          // MediaQuery.of(Context)는 내가 사용하는 기종의 관련된 것을 가져올 수 있음
+          // 앱 화면 크기 알아내는 것과 동일
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.start,
+            // CrossAxisAlignment - 반대축 정렬 , row일땐 세로, Column일땐 세로
+            // Main(주축)에서는 차지할 수 있는 모든 공간을 차지함
+            // 반대축같은 경우는 칼럼과 로우 모두 최소한의 공간만 차지함.
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.max,
             children: [
               Container(
                 color: Colors.red,
