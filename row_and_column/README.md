@@ -1,16 +1,6 @@
 # row_and_column
 
-A new Flutter project.
-
-## Getting Started
-
-This project is a starting point for a Flutter application.
-
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+1. 공부한 내용
+- 컨테이너가 상단바를 벗어난 상태. ![img.png](study1_outrangeTopBar.png)
+- 현재 커밋까지 벗어난 상황을 저장. 이후에 해결하고 방지하는 법 공부
+- 
