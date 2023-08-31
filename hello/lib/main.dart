@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 void main() {
   runApp(
     MaterialApp(
+      debugShowCheckedModeBanner: false,
         home:
             HomeScreen() // 이렇게 클래스이자 위젯명에 ()을 붙이면 오버라이딩 된 build()메서드가 실질적으로 실행된다고 생각하면 됨.
         ),
@@ -15,7 +16,7 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.orange,
+      backgroundColor: Color(0xFFF99231), // 0xFF 투명도가 없다는 뜻
       body: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
