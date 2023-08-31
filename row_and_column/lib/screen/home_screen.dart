@@ -50,24 +50,28 @@ class HomeScreen extends StatelessWidget {
                     height: 50.0,
                     width: 50.0,
                     color: Colors.red,
-                  ),Container(
+                  ),
+                  Container(
                     height: 50.0,
                     width: 50.0,
-                    color : Colors.orange,
-                  ),Container(
+                    color: Colors.orange,
+                  ),
+                  Container(
                     height: 50.0,
                     width: 50.0,
-                    color : Colors.yellow,
-                  ),Container(
+                    color: Colors.yellow,
+                  ),
+                  Container(
                     height: 50.0,
                     width: 50.0,
-                    color : Colors.green,
+                    color: Colors.green,
                   )
                 ],
-              ),Container(
+              ),
+              Container(
                 height: 50.0,
                 width: 50.0,
-                color : Colors.green,
+                color: Colors.green,
               )
             ],
           ),
