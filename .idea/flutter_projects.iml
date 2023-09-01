@@ -6,6 +6,12 @@
       <excludeFolder url="file://$MODULE_DIR$/hello/build" />
       <excludeFolder url="file://$MODULE_DIR$/hello/.pub" />
       <excludeFolder url="file://$MODULE_DIR$/hello/.dart_tool" />
+      <excludeFolder url="file://$MODULE_DIR$/row_and_column/build" />
+      <excludeFolder url="file://$MODULE_DIR$/row_and_column/.dart_tool" />
+      <excludeFolder url="file://$MODULE_DIR$/row_and_column/.pub" />
+      <excludeFolder url="file://$MODULE_DIR$/web_view_android/build" />
+      <excludeFolder url="file://$MODULE_DIR$/web_view_android/.dart_tool" />
+      <excludeFolder url="file://$MODULE_DIR$/web_view_android/.pub" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
