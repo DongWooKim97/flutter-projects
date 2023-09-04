@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -63,7 +64,30 @@ class _TopPart extends StatelessWidget {
           ),
           IconButton(
             iconSize: 60.0,
-            onPressed: () {},
+            onPressed: () {
+              // dialog -> date picker (기능 다 만들어져있음)
+              showCupertinoDialog(
+                context: context,
+                barrierDismissible: true, // 위젯의 사이즈 넘어간 것을 누르면 꺼짐
+                builder: (BuildContext context) {
+                  return Align(
+                    alignment: Alignment.bottomCenter,
+                    child: Container(
+                      // 플러터의 특징 : 특정 위젯이 어디에 정렬해야하는지 알 수없으면 최대한 사이즈로 먹어버린다. 그래서 현재는 전체화면을 다 먹어버림
+                      // align이라는 위젯을 사용해서 어디에 정렬할건지(여기서는 showDialog를) 알려줘야만 한다
+                      color: Colors.white,
+                      height: 300.0,
+                      child: CupertinoDatePicker(
+                        mode: CupertinoDatePickerMode.date,
+                        onDateTimeChanged: (DateTime date) {
+                          print(date);
+                        }, // 필수로 넣어야함
+                      ),
+                    ),
+                  );
+                },
+              );
+            },
             icon: Icon(
               Icons.favorite,
               color: Colors.red[700],
