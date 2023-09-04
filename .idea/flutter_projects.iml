@@ -12,6 +12,12 @@
       <excludeFolder url="file://$MODULE_DIR$/web_view_android/build" />
       <excludeFolder url="file://$MODULE_DIR$/web_view_android/.dart_tool" />
       <excludeFolder url="file://$MODULE_DIR$/web_view_android/.pub" />
+      <excludeFolder url="file://$MODULE_DIR$/statefulWidget/.pub" />
+      <excludeFolder url="file://$MODULE_DIR$/statefulWidget/.dart_tool" />
+      <excludeFolder url="file://$MODULE_DIR$/statefulWidget/build" />
+      <excludeFolder url="file://$MODULE_DIR$/image_carousel/.dart_tool" />
+      <excludeFolder url="file://$MODULE_DIR$/image_carousel/build" />
+      <excludeFolder url="file://$MODULE_DIR$/image_carousel/.pub" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
