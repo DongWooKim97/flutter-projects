@@ -42,3 +42,7 @@ class RouteOneScreen extends StatelessWidget {
     );
   }
 }
+
+// pushNamed를 사용하면 settings를 일단 사용할 일이 없어짐. 그렇다면 arguments를 어떻게 전달하느냐?
+// ~~.pushNamed('/', arguments : ~~~) 이런식으로 함수안에 파라미터로 바로 넘길 수 있음.
+// MaterialPageRoute를 사용하지 않아도 그냥 쉽게 넘길 수 있는 방안
