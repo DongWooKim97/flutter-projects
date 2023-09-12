@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:navigation/constatnt/routes/routes_address.dart';
 import 'package:navigation/screen/home_screen.dart';
 import 'package:navigation/screen/route_one_screen.dart';
 import 'package:navigation/screen/route_three_screen.dart';
@@ -10,10 +11,10 @@ void main() {
       // home: HomeScreen(),
       initialRoute: '/',
       routes: {
-        '/': (context) => HomeScreen(),
-        '/one': (context) => RouteOneScreen(),
-        '/two': (context) => RouteTwoScreen(),
-        '/three': (context) => RouteThreeScreen(),
+        HOME_ROUTE: (context) => HomeScreen(),
+        ONE_ROUTE: (context) => RouteOneScreen(),
+        TWO_ROUTE: (context) => RouteTwoScreen(),
+        THREE_ROUTE: (context) => RouteThreeScreen(),
       },
     ),
   );
