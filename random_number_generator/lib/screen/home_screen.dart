@@ -18,6 +18,21 @@ class _HomeScreenState extends State<HomeScreen> {
     789,
   ];
 
+  onRandomNumberGenerate() {
+    final rand = Random();
+    final Set<int> newNumbers = {};
+
+    while (newNumbers.length != 3) {
+      final number = rand.nextInt(1000);
+
+      newNumbers.add(number);
+
+      setState(() {
+        randomNumbers = newNumbers.toList();
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -36,17 +51,6 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
     );
-  }
-
-  onRandomNumberGenerate() {
-    final rand = Random();
-    final Set<int> newNumbers = {};
-
-    while (newNumbers.length != 3) {
-      final number = rand.nextInt(1000);
-
-      newNumbers.add(number);
-    }
   }
 }
 
@@ -102,7 +106,8 @@ class _Body extends StatelessWidget {
             .asMap()
             .entries
             .map(
-              (x) => Padding(
+              (x) =>
+              Padding(
                 // asMap()을 사용하면 우리는 key값을 활용할 수 있다.
                 padding: EdgeInsets.only(bottom: x.key == 2 ? 0 : 16.0),
                 child: Row(
@@ -110,16 +115,17 @@ class _Body extends StatelessWidget {
                       .toString()
                       .split('')
                       .map(
-                        (y) => Image.asset(
+                        (y) =>
+                        Image.asset(
                           'asset/img/$y.png',
                           height: 70.0,
                           width: 50.0,
                         ),
-                      )
+                  )
                       .toList(),
                 ),
               ),
-            )
+        )
             .toList(),
       ),
     );
@@ -143,7 +149,7 @@ class _Footer extends StatelessWidget {
         child: ElevatedButton(
           style: ElevatedButton.styleFrom(
             backgroundColor:
-                RED_COLOR, // primary = backgroundColor  ,, 일반적인 주된 색깔
+            RED_COLOR, // primary = backgroundColor  ,, 일반적인 주된 색깔
           ),
           onPressed: onPressed,
           child: Text('생성하기!'),
