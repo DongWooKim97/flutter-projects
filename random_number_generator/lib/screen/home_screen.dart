@@ -1,6 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
+import 'package:random_number_generator/component/number_row.dart';
 import 'package:random_number_generator/constant/color.dart';
 import 'package:random_number_generator/screen/settings_screen.dart';
 
@@ -42,7 +43,7 @@ class _HomeScreenState extends State<HomeScreen> {
     // 어떤값이 리턴될지 정할 수 있다.제너릭을 통핸
     final result = await Navigator.of(context).push<int>(
       MaterialPageRoute(builder: (BuildContext context) {
-        return SettingsScreen();
+        return SettingsScreen(maxNumber: maxNumber);
       }),
     ); // 네비게이터 활성화
 
@@ -125,22 +126,11 @@ class _Body extends StatelessWidget {
             .entries
             .map(
               (x) => Padding(
-                // asMap()을 사용하면 우리는 key값을 활용할 수 있다.
-                padding: EdgeInsets.only(bottom: x.key == 2 ? 0 : 16.0),
-                child: Row(
-                  children: x.value
-                      .toString()
-                      .split('')
-                      .map(
-                        (y) => Image.asset(
-                          'asset/img/$y.png',
-                          height: 70.0,
-                          width: 50.0,
-                        ),
-                      )
-                      .toList(),
-                ),
-              ),
+                  // asMap()을 사용하면 우리는 key값을 활용할 수 있다.
+                  padding: EdgeInsets.only(bottom: x.key == 2 ? 0 : 16.0),
+                  child: NumberRow(
+                    number: x.value,
+                  )),
             )
             .toList(),
       ),
