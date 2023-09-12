@@ -4,6 +4,8 @@
 
 그러나 setState에서는 null값이 들어가면 int형으로 선언된 maxNumber가 null이 됨으로써 에러를 발생시키기 때문에 빌드타임에서 오류발생.
 
-따라서 result 뒤에 !를 붙여 null이 아님을 공표해야함.
+따라서 result가 null이 아닌 경우에만 setState를 할 수 있도록 선언해주기위해
 
-![img_1.png](img_1.png)
+if문을 걸어 조건을 설정.
+
+![img_2.png](img_2.png)
