@@ -44,21 +44,31 @@ class _HomeScreenState extends State<HomeScreen> {
               Expanded(
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [123, 456, 789]
+                  children: [
+                    123,
+                    456,
+                    789,
+                  ]
+                      .asMap()
+                      .entries
                       .map(
-                        (x) => Row(
-                          children: x
-                              .toString()
-                              .split('')
-                              .map(
-                                (y) => Image.asset(
-                                  'asset/img/$y.png',
-                                  height: 70.0,
-                                  width: 50.0,
-                                ),
-                              )
-                              .toList(),
+                        (x) => Padding(
+                          // asMap()을 사용하면 우리는 key값을 활용할 수 있다.
+                          padding:
+                              EdgeInsets.only(bottom: x.key == 2 ? 0 : 16.0),
+                          child: Row(
+                            children: x.value
+                                .toString()
+                                .split('')
+                                .map(
+                                  (y) => Image.asset(
+                                    'asset/img/$y.png',
+                                    height: 70.0,
+                                    width: 50.0,
+                                  ),
+                                )
+                                .toList(),
+                          ),
                         ),
                       )
                       .toList(),
