@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:random_number_generator/constant/color.dart';
+import 'package:random_number_generator/screen/settings_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -66,7 +67,14 @@ class _Header extends StatelessWidget {
           ),
         ),
         IconButton(
-          onPressed: () {},
+          onPressed: () {
+            // list -- add 와 같은 함수 = push // 라우터스택!!
+            Navigator.of(context).push(
+              MaterialPageRoute(builder: (BuildContext context) {
+                return SettingsScreen();
+              }),
+            ); // 네비게이터 활성화
+          },
           icon: Icon(
             Icons.settings,
             color: RED_COLOR,
