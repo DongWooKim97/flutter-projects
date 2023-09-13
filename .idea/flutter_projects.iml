@@ -27,6 +27,12 @@
       <excludeFolder url="file://$MODULE_DIR$/video_player/.dart_tool" />
       <excludeFolder url="file://$MODULE_DIR$/video_player/build" />
       <excludeFolder url="file://$MODULE_DIR$/video_player/.pub" />
+      <excludeFolder url="file://$MODULE_DIR$/vid_player/.dart_tool" />
+      <excludeFolder url="file://$MODULE_DIR$/vid_player/build" />
+      <excludeFolder url="file://$MODULE_DIR$/vid_player/.pub" />
+      <excludeFolder url="file://$MODULE_DIR$/visit_check/.dart_tool" />
+      <excludeFolder url="file://$MODULE_DIR$/visit_check/.pub" />
+      <excludeFolder url="file://$MODULE_DIR$/visit_check/build" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
