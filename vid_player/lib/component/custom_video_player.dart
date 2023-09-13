@@ -18,6 +18,7 @@ class CustomVideoPlayer extends StatefulWidget {
 
 class _CustomVideoPlayerState extends State<CustomVideoPlayer> {
   VideoPlayerController? videoController;
+  Duration currentPosition = Duration();
 
   @override
   void initState() {
@@ -31,6 +32,15 @@ class _CustomVideoPlayerState extends State<CustomVideoPlayer> {
     );
 
     await videoController!.initialize();
+
+    videoController!.addListener(() {
+      // 비디오컨트롤러가 (현재)값이 변경될 때 마다 리스너 실행
+      final currentPosition = videoController!.value.position;
+      setState(() {
+        this.currentPosition = currentPosition;
+      });
+    });
+
     setState(() {});
   }
 
@@ -90,14 +100,42 @@ class _CustomVideoPlayerState extends State<CustomVideoPlayer> {
             onRightPressed: onRightPressed,
             isPlaying: videoController!.value.isPlaying,
           ),
+          _NewVideo(
+            onPressed: onNewVideoPressed,
+          ),
           Positioned(
-            right: 0, // 오른쪽 0만큼의 포지션에 위치.
-            child: IconButton(
-              color: Colors.white,
-              iconSize: 30.0,
-              onPressed: () {},
-              icon: Icon(
-                Icons.photo_camera_back,
+            bottom: 0,
+            right: 0,
+            left: 0,
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 8.0),
+              child: Row(
+                children: [
+                  Text(
+                    '${currentPosition.inMinutes}:${(currentPosition.inSeconds %
+                        60).toString().padLeft(2, '0')}',
+                    style: TextStyle(
+                      color: Colors.white,
+                    ),
+                  ),
+                  Expanded(
+                    child: Slider(
+                      value: currentPosition.inSeconds.toDouble(),
+                      onChanged: (double val) {
+                        videoController!.seekTo(Duration(seconds: val.toInt()));
+                      },
+                      max: videoController!.value.duration.inSeconds.toDouble(),
+                      min: 0,
+                    ),
+                  ),
+                  Text(
+                    '${currentPosition.inMinutes}:${(videoController!.value
+                        .duration.inSeconds % 60).toString().padLeft(2, '0')}',
+                    style: TextStyle(
+                      color: Colors.white,
+                    ),
+                  ),
+                ],
               ),
             ),
           )
@@ -105,6 +143,8 @@ class _CustomVideoPlayerState extends State<CustomVideoPlayer> {
       ),
     );
   }
+
+  void onNewVideoPressed() {}
 }
 
 class _Controls extends StatelessWidget {
@@ -130,13 +170,17 @@ class _Controls extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           renderIconButton(
-              onPressed: onLeftPressed, iconData: Icons.rotate_left),
+            onPressed: onLeftPressed,
+            iconData: Icons.rotate_left,
+          ),
           renderIconButton(
             onPressed: onPlayPressed,
             iconData: isPlaying ? Icons.pause : Icons.play_arrow,
           ),
           renderIconButton(
-              onPressed: onRightPressed, iconData: Icons.rotate_right),
+            onPressed: onRightPressed,
+            iconData: Icons.rotate_right,
+          ),
         ],
       ),
     );
@@ -157,5 +201,37 @@ class _Controls extends StatelessWidget {
   }
 }
 
+class _NewVideo extends StatelessWidget {
+  final VoidCallback onPressed;
+
+  const _NewVideo({
+    required this.onPressed,
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Positioned(
+      right: 0, // 오른쪽 0만큼의 포지션에 위치.
+      child: IconButton(
+        color: Colors.white,
+        iconSize: 30.0,
+        onPressed: onPressed,
+        icon: Icon(
+          Icons.photo_camera_back,
+        ),
+      ),
+    );
+  }
+}
+
 // 새로운 위젯들을 사용하기 위해선 스택을 이용해야함.
 // 컨트롤(스택에 있는 위젯들)이 뜨면은 뒤에 배경색을 조금 어둡게 처리헤줘야 컨트롤들이 잘 보임
+
+// 컨트롤러에는 리스너를 달 수 있다.
+// 슬라이더로 움직일 때 동영상을 조절할 수 있어야 한다.
+
+// 컨트롤러에 들어간 노브는 우리가 컨트롤러의 현재값을 가지고만 움직이고 있었다.
+// 그런데, 이 값은 컨트롤러가 값이 바꼈을 때마다 그 값을 가지고 오고 있다.
+// 이거 이해하기 좀 어렵다. 노브를 우리가 직접 움직일 때 onChanged가 매번 실행되고 움직이는 방향대로 비디오 컨트롤러가 움직이라고
+// 값을 다시 가져다 줘야하기 때문.
