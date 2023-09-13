@@ -1,24 +1,61 @@
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 
-class HomeScreen extends StatelessWidget {
+class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
+
+  @override
+  State<HomeScreen> createState() => _HomeScreenState();
+}
+
+class _HomeScreenState extends State<HomeScreen> {
+  XFile? video;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        width: MediaQuery.of(context).size.width,
-        decoration: getBoxDecoration(),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            _Logo(),
-            SizedBox(height: 30.0),
-            _AppName(),
-          ],
-        ),
+      body: video == null ? renderEmpty() : renderVideo(),
+    );
+  }
+
+  Widget renderVideo() {
+    return Center(
+      child: Text(
+        'Video',
       ),
     );
+  }
+
+  Widget renderEmpty() {
+    return Container(
+      width: MediaQuery
+          .of(context)
+          .size
+          .width,
+      decoration: getBoxDecoration(),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          _Logo(
+            onTap: onLogoTap,
+          ),
+          SizedBox(height: 30.0),
+          _AppName(),
+        ],
+      ),
+    );
+  }
+
+  void onLogoTap() async {
+    final video = await ImagePicker().pickVideo(
+      source: ImageSource.gallery,
+    );
+
+    if (video != null) {
+      setState(() {
+        this.video = video;
+      });
+    }
   }
 
   BoxDecoration getBoxDecoration() {
@@ -36,12 +73,20 @@ class HomeScreen extends StatelessWidget {
 }
 
 class _Logo extends StatelessWidget {
-  const _Logo({Key? key}) : super(key: key);
+  final VoidCallback onTap;
+
+  const _Logo({
+    required this.onTap,
+    Key? key,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return Image.asset(
-      'asset/image/logo.png',
+    return GestureDetector(
+      onTap: onTap,
+      child: Image.asset(
+        'asset/image/logo.png',
+      ),
     );
   }
 }
@@ -79,3 +124,5 @@ class _AppName extends StatelessWidget {
 
 // 기존 스타일에 추가값을 덮어씌우기 위해서는 ~~~.copyWith()을 통해 사용하고, 덮어쓰고자 하는 값의 파라미터 이름만 넣고 변경한다.
 // SizedBox를 Padding 대신에 사용하는 이유는? Padding은 한번 감싸야한다.-> 탭이 하나 더 들어가기때문에 보기싫어서 SizedBox를 사용해도무방하다. (에디터기준)
+
+//
