@@ -6,9 +6,11 @@ import 'package:video_player/video_player.dart';
 
 class CustomVideoPlayer extends StatefulWidget {
   final XFile video;
+  final VoidCallback onNewVideoPressed;
 
   const CustomVideoPlayer({
     required this.video,
+    required this.onNewVideoPressed,
     Key? key,
   }) : super(key: key);
 
@@ -19,14 +21,27 @@ class CustomVideoPlayer extends StatefulWidget {
 class _CustomVideoPlayerState extends State<CustomVideoPlayer> {
   VideoPlayerController? videoController;
   Duration currentPosition = Duration();
+  bool showControls = false;
 
-  @override
+  @override // initState는 무조건 State가 생성될 때 딱 한번만 실행된다!!
   void initState() {
     super.initState();
     initializeController();
   }
 
+  // StatefulWidget이 실행된 이력이 있는데(=initState는 이미 실행돼서 더 이상 실행될 수 없는 상황),
+  // StatefulWidget에서 파라미터만 변경되었을 때 사용가능하다.
+  @override
+  void didUpdateWidget(covariant CustomVideoPlayer oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.video.path != widget.video.path) {
+      initializeController();
+    }
+  }
+
   initializeController() async {
+    currentPosition = Duration(); // 다시 값을 0으로 (영상시작으로) 돌림.
+
     videoController = VideoPlayerController.file(
       File(widget.video.path),
     );
@@ -89,62 +104,46 @@ class _CustomVideoPlayerState extends State<CustomVideoPlayer> {
 
     return AspectRatio(
       aspectRatio: videoController!.value.aspectRatio, // 원래 비율대로 넣어야함
-      child: Stack(
-        children: [
-          VideoPlayer(
-            videoController!,
-          ),
-          _Controls(
-            onLeftPressed: onLeftPressed,
-            onPlayPressed: onPlayPressed,
-            onRightPressed: onRightPressed,
-            isPlaying: videoController!.value.isPlaying,
-          ),
-          _NewVideo(
-            onPressed: onNewVideoPressed,
-          ),
-          Positioned(
-            bottom: 0,
-            right: 0,
-            left: 0,
-            child: Padding(
-              padding: EdgeInsets.symmetric(horizontal: 8.0),
-              child: Row(
-                children: [
-                  Text(
-                    '${currentPosition.inMinutes}:${(currentPosition.inSeconds %
-                        60).toString().padLeft(2, '0')}',
-                    style: TextStyle(
-                      color: Colors.white,
-                    ),
-                  ),
-                  Expanded(
-                    child: Slider(
-                      value: currentPosition.inSeconds.toDouble(),
-                      onChanged: (double val) {
-                        videoController!.seekTo(Duration(seconds: val.toInt()));
-                      },
-                      max: videoController!.value.duration.inSeconds.toDouble(),
-                      min: 0,
-                    ),
-                  ),
-                  Text(
-                    '${currentPosition.inMinutes}:${(videoController!.value
-                        .duration.inSeconds % 60).toString().padLeft(2, '0')}',
-                    style: TextStyle(
-                      color: Colors.white,
-                    ),
-                  ),
-                ],
-              ),
+      child: GestureDetector(
+        onTap: () {
+          setState(() {
+            showControls = !showControls;
+          });
+        },
+        child: Stack(
+          children: [
+            VideoPlayer(
+              videoController!,
             ),
-          )
-        ],
+            if (showControls)
+              _Controls(
+                onLeftPressed: onLeftPressed,
+                onPlayPressed: onPlayPressed,
+                onRightPressed: onRightPressed,
+                isPlaying: videoController!.value.isPlaying,
+              ),
+            if (showControls)
+              _NewVideo(
+                onPressed: widget.onNewVideoPressed,
+              ),
+            _SliderBottom(
+              currentPosition: currentPosition,
+              maxPosition: videoController!.value.duration,
+              onSliderChanged: onSliderChanged,
+            )
+          ],
+        ),
       ),
     );
   }
 
-  void onNewVideoPressed() {}
+  void onSliderChanged(double val) {
+    videoController!.seekTo(
+      Duration(
+        seconds: val.toInt(),
+      ),
+    );
+  }
 }
 
 class _Controls extends StatelessWidget {
@@ -165,8 +164,8 @@ class _Controls extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       color: Colors.black.withOpacity(0.5),
+      height: MediaQuery.of(context).size.height,
       child: Row(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
         mainAxisAlignment: MainAxisAlignment.spaceEvenly,
         children: [
           renderIconButton(
@@ -219,6 +218,55 @@ class _NewVideo extends StatelessWidget {
         onPressed: onPressed,
         icon: Icon(
           Icons.photo_camera_back,
+        ),
+      ),
+    );
+  }
+}
+
+class _SliderBottom extends StatelessWidget {
+  final Duration currentPosition;
+  final Duration maxPosition;
+  final ValueChanged<double> onSliderChanged;
+
+  const _SliderBottom({
+    required this.currentPosition,
+    required this.maxPosition,
+    required this.onSliderChanged,
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return Positioned(
+      bottom: 0,
+      right: 0,
+      left: 0,
+      child: Padding(
+        padding: EdgeInsets.symmetric(horizontal: 8.0),
+        child: Row(
+          children: [
+            Text(
+              '${currentPosition.inMinutes}:${(currentPosition.inSeconds % 60).toString().padLeft(2, '0')}',
+              style: TextStyle(
+                color: Colors.white,
+              ),
+            ),
+            Expanded(
+              child: Slider(
+                value: currentPosition.inSeconds.toDouble(),
+                onChanged: onSliderChanged,
+                max: maxPosition.inSeconds.toDouble(),
+                min: 0,
+              ),
+            ),
+            Text(
+              '${maxPosition.inMinutes}:${(maxPosition.inSeconds % 60).toString().padLeft(2, '0')}',
+              style: TextStyle(
+                color: Colors.white,
+              ),
+            ),
+          ],
         ),
       ),
     );
