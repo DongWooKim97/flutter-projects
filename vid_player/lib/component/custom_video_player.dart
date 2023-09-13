@@ -35,20 +35,40 @@ class _CustomVideoPlayerState extends State<CustomVideoPlayer> {
   }
 
   void onLeftPressed() {
+    final currentPosition = videoController!.value.position; // 현재위치
 
+    Duration position = Duration(); // 디폴트는 0초
+
+    if (currentPosition.inSeconds > 3) {
+      position = currentPosition - Duration(seconds: 3);
+    }
+
+    videoController!.seekTo(position); // 이동할 위치 설정
   }
 
   void onPlayPressed() {
     // 이미 실행중이면 중지 , 중지일땐 실행
-    if (videoController!.value.isPlaying) {
-      videoController!.pause();
-    } else {
-
-    }
+    setState(() {
+      if (videoController!.value.isPlaying) {
+        videoController!.pause();
+      } else {
+        videoController!.play();
+      }
+    });
   }
 
   void onRightPressed() {
+    final maxPosition = videoController!.value.duration;
+    final currentPosition = videoController!.value.position; // 현재위치
 
+    Duration position = maxPosition; // 최대 길이는 비디오의 영상길이로
+
+    if ((maxPosition - Duration(seconds: 3)).inSeconds >
+        currentPosition.inSeconds) {
+      position = currentPosition + Duration(seconds: 3);
+    }
+
+    videoController!.seekTo(position); // 이동할 위치 설정
   }
 
   @override
