@@ -10,6 +10,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  bool chooCheckDone = false;
   static final double okDistance = 100;
   static final LatLng companyLatLng = LatLng(37.5233273, 126.921252);
   static final CameraPosition initialPosition = CameraPosition(
@@ -49,7 +50,7 @@ class _HomeScreenState extends State<HomeScreen> {
     circleId: CircleId('notWithinDistanceCircle'),
     center: companyLatLng,
     //투명도를 설정하지 않고 원을 구리면 지도를 불투명하게 가려버린다.
-    fillColor: Colors.blue.withOpacity(0.5),
+    fillColor: Colors.green.withOpacity(0.5),
     //내부색칠
     radius: okDistance,
     //원의 둘레 색칠
@@ -100,11 +101,17 @@ class _HomeScreenState extends State<HomeScreen> {
                   children: [
                     _CustomGoogleMap(
                         initialPosition: initialPosition,
-                        circle: isWithinRange
-                            ? withinDistanceCircle
-                            : notWithinDistanceCircle,
+                        circle: chooCheckDone
+                            ? checkDoneCircle
+                            : isWithinRange
+                                ? withinDistanceCircle
+                                : notWithinDistanceCircle,
                         marker: marker),
-                    _ChoolCheckButton(),
+                    _ChoolCheckButton(
+                      isWithinRange: isWithinRange,
+                      choolCheckDone: chooCheckDone,
+                      onPressed: onChooCheckPressed,
+                    ),
                   ],
                 );
               },
@@ -114,6 +121,39 @@ class _HomeScreenState extends State<HomeScreen> {
         },
       ),
     );
+  }
+
+  onChooCheckPressed() async {
+    // 예 /아니오 기능
+    // 값을 받아오고 싶으면 async로 해야된다.
+    final result = await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('출근하기'), // 다이얼로그창의 제목
+          content: Text('출근을 하시겠습니까?'), // 다이얼로그창의 내용
+          actions: [
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(false);
+              },
+              child: Text('취소'),
+            ),
+            TextButton(
+              onPressed: () {
+                Navigator.of(context).pop(true);
+              },
+              child: Text('확인'),
+            ),
+          ], // 실질적으로 누를 수 있는 버튼들(예/아니오)
+        );
+      },
+    );
+    if (result) {
+      setState(() {
+        chooCheckDone = true;
+      });
+    }
   }
 
   Future<String> checkPermission() async {
@@ -182,13 +222,42 @@ class _CustomGoogleMap extends StatelessWidget {
 }
 
 class _ChoolCheckButton extends StatelessWidget {
-  const _ChoolCheckButton({Key? key}) : super(key: key);
+  final bool isWithinRange;
+  final bool choolCheckDone;
+  final VoidCallback onPressed;
+
+  const _ChoolCheckButton({
+    required this.isWithinRange,
+    required this.choolCheckDone,
+    required this.onPressed,
+    Key? key,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Expanded(
-      child: Text(
-        '출근',
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.timelapse_outlined,
+            size: 50.0,
+            color: choolCheckDone
+                ? Colors.green
+                : isWithinRange
+                    ? Colors.blue
+                    : Colors.red,
+          ),
+          const SizedBox(
+            height: 20.0,
+          ),
+          // 칼럼안에 대뜸 if문을 걸 수 있다 . if문 조건을 통과해야지만 아래 위젯이 나타남
+          if (!choolCheckDone && isWithinRange)
+            TextButton(
+              onPressed: onPressed,
+              child: Text('출근하기'),
+            )
+        ],
       ),
     );
   }
