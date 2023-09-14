@@ -10,7 +10,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  static final double distance = 100;
+  static final double okDistance = 100;
   static final LatLng companyLatLng = LatLng(37.5233273, 126.921252);
   static final CameraPosition initialPosition = CameraPosition(
     target: companyLatLng,
@@ -18,17 +18,48 @@ class _HomeScreenState extends State<HomeScreen> {
   );
 
   //실제로 그릴 원을 생성한다.
-  static final Circle circle = Circle(
+  static final Circle withinDistanceCircle = Circle(
     //id값은 화면을 여러개의 원을 그렸을 때 식별할 수 있는 식별자 역할을 한다.
-    circleId: CircleId('circle'),
+    circleId: CircleId('withinDistanceCircle'),
     center: companyLatLng,
     //투명도를 설정하지 않고 원을 구리면 지도를 불투명하게 가려버린다.
     fillColor: Colors.blue.withOpacity(0.5),
     //내부색칠
-    radius: distance,
+    radius: okDistance,
     //원의 둘레 색칠
     strokeColor: Colors.blue,
     strokeWidth: 1,
+  );
+
+  static final Circle notWithinDistanceCircle = Circle(
+    //id값은 화면을 여러개의 원을 그렸을 때 식별할 수 있는 식별자 역할을 한다.
+    circleId: CircleId('notWithinDistanceCircle'),
+    center: companyLatLng,
+    //투명도를 설정하지 않고 원을 구리면 지도를 불투명하게 가려버린다.
+    fillColor: Colors.red.withOpacity(0.5),
+    //내부색칠
+    radius: okDistance,
+    //원의 둘레 색칠
+    strokeColor: Colors.red,
+    strokeWidth: 1,
+  );
+
+  static final Circle checkDoneCircle = Circle(
+    //id값은 화면을 여러개의 원을 그렸을 때 식별할 수 있는 식별자 역할을 한다.
+    circleId: CircleId('notWithinDistanceCircle'),
+    center: companyLatLng,
+    //투명도를 설정하지 않고 원을 구리면 지도를 불투명하게 가려버린다.
+    fillColor: Colors.blue.withOpacity(0.5),
+    //내부색칠
+    radius: okDistance,
+    //원의 둘레 색칠
+    strokeColor: Colors.green,
+    strokeWidth: 1,
+  );
+
+  static final Marker marker = Marker(
+    markerId: MarkerId('marker'),
+    position: companyLatLng,
   );
 
   @override
@@ -44,14 +75,39 @@ class _HomeScreenState extends State<HomeScreen> {
             );
           }
           if (snapshot.data == '위치 권한이 허가 되었습니다.') {
-            return Column(
-              children: [
-                _CustomGoogleMap(
-                  initialPosition: initialPosition,
-                  circle: circle,
-                ),
-                _ChoolCheckButton(),
-              ],
+            return StreamBuilder<Position>(
+              stream: Geolocator.getPositionStream(), // 포지션 변경할때마다 불림.
+              builder: (context, snapshot) {
+                bool isWithinRange = false;
+
+                if (snapshot.hasData) {
+                  final start = snapshot.data!;
+                  final end = companyLatLng;
+
+                  final distance = Geolocator.distanceBetween(
+                    start.latitude,
+                    start.longitude,
+                    end.latitude,
+                    end.longitude,
+                  );
+
+                  if (distance < okDistance) {
+                    isWithinRange = true;
+                  }
+                }
+
+                return Column(
+                  children: [
+                    _CustomGoogleMap(
+                        initialPosition: initialPosition,
+                        circle: isWithinRange
+                            ? withinDistanceCircle
+                            : notWithinDistanceCircle,
+                        marker: marker),
+                    _ChoolCheckButton(),
+                  ],
+                );
+              },
             );
           }
           return Center(child: Text(snapshot.data));
@@ -99,17 +155,19 @@ class _HomeScreenState extends State<HomeScreen> {
 class _CustomGoogleMap extends StatelessWidget {
   final CameraPosition initialPosition;
   final Circle circle;
+  final Marker marker;
 
   const _CustomGoogleMap({
     required this.initialPosition,
     required this.circle,
+    required this.marker,
     Key? key,
   }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return Expanded(
-      flex: 5,
+      flex: 2,
       child: GoogleMap(
         mapType: MapType.normal,
         initialCameraPosition: initialPosition,
@@ -117,6 +175,7 @@ class _CustomGoogleMap extends StatelessWidget {
         myLocationButtonEnabled: false,
         //Set이 리턴타입이기에 중복되면 하나로 인식돼서 화면에 하나만 나타난다. 결국은 화면에 동시에 띄우고 싶다면 아까 설정한 circleId를 각각 달리 설정해줘야한다.
         circles: Set.from([circle]),
+        markers: Set.from([marker]),
       ),
     );
   }
