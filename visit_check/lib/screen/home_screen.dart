@@ -11,6 +11,8 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   bool chooCheckDone = false;
+  GoogleMapController? mapController;
+
   static final double okDistance = 100;
   static final LatLng companyLatLng = LatLng(37.5233273, 126.921252);
   static final CameraPosition initialPosition = CameraPosition(
@@ -100,13 +102,15 @@ class _HomeScreenState extends State<HomeScreen> {
                 return Column(
                   children: [
                     _CustomGoogleMap(
-                        initialPosition: initialPosition,
-                        circle: chooCheckDone
-                            ? checkDoneCircle
-                            : isWithinRange
-                                ? withinDistanceCircle
-                                : notWithinDistanceCircle,
-                        marker: marker),
+                      initialPosition: initialPosition,
+                      circle: chooCheckDone
+                          ? checkDoneCircle
+                          : isWithinRange
+                              ? withinDistanceCircle
+                              : notWithinDistanceCircle,
+                      marker: marker,
+                      onMapCreated: onMapCreated,
+                    ),
                     _ChoolCheckButton(
                       isWithinRange: isWithinRange,
                       choolCheckDone: chooCheckDone,
@@ -121,6 +125,11 @@ class _HomeScreenState extends State<HomeScreen> {
         },
       ),
     );
+  }
+
+  onMapCreated(GoogleMapController controller) {
+    //setState할 필요없음. 왜? 컨트롤러가 생겼다해서 화면을 다시 재비륻할 필요가 없는 컨트롤러이기 때문에
+    mapController = controller;
   }
 
   onChooCheckPressed() async {
@@ -188,6 +197,25 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
       ),
       backgroundColor: Colors.white,
+      actions: [
+        IconButton(
+          onPressed: () async {
+            if (mapController == null) {
+              return;
+            }
+
+            final location = await Geolocator.getCurrentPosition();
+
+            mapController!.animateCamera(
+              CameraUpdate.newLatLng(
+                LatLng((location.latitude), location.longitude),
+              ),
+            );
+          },
+          color: Colors.blue,
+          icon: Icon(Icons.my_location),
+        ),
+      ],
     );
   }
 }
@@ -196,11 +224,13 @@ class _CustomGoogleMap extends StatelessWidget {
   final CameraPosition initialPosition;
   final Circle circle;
   final Marker marker;
+  final MapCreatedCallback onMapCreated;
 
   const _CustomGoogleMap({
     required this.initialPosition,
     required this.circle,
     required this.marker,
+    required this.onMapCreated,
     Key? key,
   }) : super(key: key);
 
@@ -216,6 +246,7 @@ class _CustomGoogleMap extends StatelessWidget {
         //Set이 리턴타입이기에 중복되면 하나로 인식돼서 화면에 하나만 나타난다. 결국은 화면에 동시에 띄우고 싶다면 아까 설정한 circleId를 각각 달리 설정해줘야한다.
         circles: Set.from([circle]),
         markers: Set.from([marker]),
+        onMapCreated: onMapCreated,
       ),
     );
   }
