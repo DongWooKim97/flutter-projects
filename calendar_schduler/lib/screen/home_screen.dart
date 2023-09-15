@@ -35,13 +35,25 @@ class _HomeScreenState extends State<HomeScreen> {
               scheduleCount: 3,
             ),
             SizedBox(height: 8.0),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 10.0),
-              child: ScheduleCard(
-                startTime: 12,
-                endTime: 14,
-                content: '프로그래밍 공부하기.',
-                color: Colors.red,
+            Expanded(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 10.0),
+                child: ListView.separated(
+                  itemCount: 10,
+                  separatorBuilder: (context, index) { // 각각의 아이템 사이에 들어갈 위젯들을 그려주는 역할.
+                    return SizedBox(height: 8.0);
+                  },
+                  itemBuilder: (context, index) {
+                    // 해당 인덱스에 도달했을 때 아이템빌더가 실행된다는 뜻
+                    // 인덱스를 이용하여 짝수는 뭐 어떻게, 홀수는 어떻게 다른 위젯으로 보여주기등 이런 식으로도 가능하다.
+                    return ScheduleCard(
+                      startTime: 12,
+                      endTime: 14,
+                      content: '${index + 1}. 프로그래밍 공부하기. ',
+                      color: Colors.red,
+                    );
+                  },
+                ),
               ),
             ),
           ],
