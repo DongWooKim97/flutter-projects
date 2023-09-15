@@ -69,11 +69,8 @@ flutter:
   # the material Icons class.
   uses-material-design: true
 
-  assets:
-    - asset/img/
-
   fonts:
-    - family: NotofSans
+    - family: NotoSans
       fonts:
         - asset: asset/font/NotoSansKR-Black.otf
           weight: 900
