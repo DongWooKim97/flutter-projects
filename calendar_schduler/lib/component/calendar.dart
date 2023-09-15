@@ -25,6 +25,7 @@ class _CalendarState extends State<Calendar> {
   @override
   Widget build(BuildContext context) {
     return TableCalendar(
+      locale: 'ko_KR', // 다국어 가자
       focusedDay: focusedDay,
       // 단순이 몇월을 보여줄지 결정하는 값
       firstDay: DateTime(1800),
