@@ -2,30 +2,28 @@ import 'package:calendar_schduler/constant/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 
-class Calendar extends StatefulWidget {
-  const Calendar({Key? key}) : super(key: key);
+class Calendar extends StatelessWidget {
+  final DateTime? selectedDay;
+  final DateTime focusedDay;
+  final OnDaySelected? onDaySelected;
 
-  @override
-  State<Calendar> createState() => _CalendarState();
-}
-
-class _CalendarState extends State<Calendar> {
-  final defaultBoxDeco = BoxDecoration(
-    borderRadius: BorderRadius.circular(60.0),
-    color: Colors.grey[200],
-  );
-  final defaultTextStyle = TextStyle(
-    color: Colors.grey[600],
-    fontWeight: FontWeight.w700,
-  );
-
-  DateTime? selectedDay;
-  DateTime focusedDay = DateTime.now();
+  const Calendar({
+    required this.selectedDay,
+    required this.focusedDay,
+    required this.onDaySelected,
+    Key? key,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final defaultBoxDeco = BoxDecoration(
+        borderRadius: BorderRadius.circular(60.0), color: Colors.grey[200]);
+    final defaultTextStyle =
+        TextStyle(color: Colors.grey[600], fontWeight: FontWeight.w700);
+
     return TableCalendar(
-      locale: 'ko_KR', // 다국어 가자
+      locale: 'ko_KR',
+      // 다국어 가자
       focusedDay: focusedDay,
       // 단순이 몇월을 보여줄지 결정하는 값
       firstDay: DateTime(1800),
@@ -63,14 +61,7 @@ class _CalendarState extends State<Calendar> {
           color: PRIMARY_COLOR,
         ),
       ),
-      onDaySelected: (DateTime selectedDay, DateTime focusedDay) {
-        // 어떤 날짜가 선택되었는지를 가지고 있어야하니까 stateful하게해야함
-        // 슬라이더처럼 선택된 날짜가 얼마인지 다시 값을 넘겨서 build해줘야한다!!!!
-        setState(() {
-          this.selectedDay = selectedDay;
-          this.focusedDay = selectedDay;
-        });
-      },
+      onDaySelected: onDaySelected,
       selectedDayPredicate: (DateTime date) {
         //date == selectedDay를 안하는 이유는 이렇게 하면 시/분/초 까지 다 비교하기때문에. 우리는 그럴 필요는 없었기에 사용하지 않음.
         if (selectedDay == null) {
@@ -94,4 +85,3 @@ class _CalendarState extends State<Calendar> {
 // ), -!> 이 코드로 해결함.
 
 // -?> 2번째 에러. 전월 31일을 누르면 그쪽으로 포커싱해야함. 근데 그게 안됨. 그걸 어떻게 수정? focusedDay를 수정하면 될듯.
-
