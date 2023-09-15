@@ -10,7 +10,6 @@ class Calendar extends StatefulWidget {
 }
 
 class _CalendarState extends State<Calendar> {
-  DateTime? selectedDay;
   final defaultBoxDeco = BoxDecoration(
     borderRadius: BorderRadius.circular(60.0),
     color: Colors.grey[200],
@@ -20,10 +19,13 @@ class _CalendarState extends State<Calendar> {
     fontWeight: FontWeight.w700,
   );
 
+  DateTime? selectedDay;
+  DateTime focusedDay = DateTime.now();
+
   @override
   Widget build(BuildContext context) {
     return TableCalendar(
-      focusedDay: DateTime.now(),
+      focusedDay: focusedDay,
       // 단순이 몇월을 보여줄지 결정하는 값
       firstDay: DateTime(1800),
       //가장 첫번째 날짜를 언제할건지 결정
@@ -51,6 +53,9 @@ class _CalendarState extends State<Calendar> {
             color: PRIMARY_COLOR,
           ),
         ),
+        outsideDecoration: BoxDecoration(
+          shape: BoxShape.rectangle,
+        ),
         defaultTextStyle: defaultTextStyle,
         weekendTextStyle: defaultTextStyle,
         selectedTextStyle: defaultTextStyle.copyWith(
@@ -62,6 +67,7 @@ class _CalendarState extends State<Calendar> {
         // 슬라이더처럼 선택된 날짜가 얼마인지 다시 값을 넘겨서 build해줘야한다!!!!
         setState(() {
           this.selectedDay = selectedDay;
+          this.focusedDay = selectedDay;
         });
       },
       selectedDayPredicate: (DateTime date) {
@@ -77,3 +83,14 @@ class _CalendarState extends State<Calendar> {
     );
   }
 }
+
+// intl 패키지를 이용한 다국어 사용 강의 시작
+// 우선 에러발생. 캘린더의 기본값은 동그라미로 설정되어있느넫, 에러난 곳을 찾아가보니까  Can't have a border radius if you're a circle.
+// 너가 동그라미면 border radius를 가질 수 없다. 지금 내가 보기에 현재 날짜나 클릭한 날짜들은 동그라미 처럼 보이는데?라고 생각할 수 있지만
+// 우리는 네모를 많이 깎아서 동그라미'처럼'보이는 것 뿐 동그라미가 아님. 그래서 저것들을 동그라미로 돌려줘야 해결되지 않을까 생각
+// outsideDecoration: BoxDecoration(
+//           shape: BoxShape.rectangle,
+// ), -!> 이 코드로 해결함.
+
+// -?> 2번째 에러. 전월 31일을 누르면 그쪽으로 포커싱해야함. 근데 그게 안됨. 그걸 어떻게 수정? focusedDay를 수정하면 될듯.
+
