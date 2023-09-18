@@ -31,7 +31,17 @@ class CustomTextField extends StatelessWidget {
   }
 
   Widget renderTextField() {
-    return TextField(
+    return TextFormField(
+      // Form -> input들을 동시에 관리 -> 특정 버튼같은걸 눌렀을 때 한번에 여러 필드에 어떤 오류가 있는지 알 수 있음.
+      validator: (String? val) {
+        // null이 return되면 에러가 없다.
+        // error가 있으면 error를 String값으로 리턴해준다.
+        if(val == null || val.isEmpty) {
+          return '값을 입력해주세요.';
+        }
+        return null;
+        // return null; // 기본은 return null이다.
+      },
       cursorColor: Colors.grey,
       expands: !isTime,
       maxLines: isTime ? 1 : null,

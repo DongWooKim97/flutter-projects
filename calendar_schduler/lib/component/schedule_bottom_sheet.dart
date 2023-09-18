@@ -2,8 +2,16 @@ import 'package:calendar_schduler/component/custom_text_field.dart';
 import 'package:calendar_schduler/constant/colors.dart';
 import 'package:flutter/material.dart';
 
-class ScheduleBottomSheet extends StatelessWidget {
+// Form의 Key라는 State를 관리해야 하니까 Stateful로 변경
+class ScheduleBottomSheet extends StatefulWidget {
   const ScheduleBottomSheet({Key? key}) : super(key: key);
+
+  @override
+  State<ScheduleBottomSheet> createState() => _ScheduleBottomSheetState();
+}
+
+class _ScheduleBottomSheetState extends State<ScheduleBottomSheet> {
+  final GlobalKey<FormState> formKey = GlobalKey();
 
   @override
   Widget build(BuildContext context) {
@@ -23,25 +31,44 @@ class ScheduleBottomSheet extends StatelessWidget {
           child: Padding(
             padding: EdgeInsets.only(bottom: bottomInset),
             child: Padding(
-
               padding: EdgeInsets.only(left: 8.0, right: 8.0, top: 16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _Time(),
-                  SizedBox(height: 16.0),
-                  _Content(),
-                  SizedBox(height: 16.0),
-                  _ColorPicker(),
-                  SizedBox(height: 8.0),
-                  _SaveButton(),
-                ],
+              child: Form(
+                //Form은 key라는 값을 넣어야함.
+                key: formKey, // key에는 글로벌키를 넣어서 하나의 컨트롤러 역할 권한을 부여
+                child: Column(
+                  //텍스트필드가 있는 하위보다 상위(아무데나)에 Form위젯을 설정하면 한번에 모든 텍스트필드들을 관리할 수 있다.
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    _Time(),
+                    SizedBox(height: 16.0),
+                    _Content(),
+                    SizedBox(height: 16.0),
+                    _ColorPicker(),
+                    SizedBox(height: 8.0),
+                    _SaveButton(
+                      onPressed: onSavePressed,
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
         ),
       ),
     );
+  }
+
+  void onSavePressed() {
+    // formKey는 생성을 했는데, formWidget과 결합을 안했을 때 아래상황
+    if (formKey.currentState == null) {
+      return;
+    }
+    // validate를 실행하는 순간 formKey가 입력되어있는 form아래에 있는 모든 TextFormField들의 Validator가 실행된다.
+    if (formKey.currentState!.validate()) {
+      print('에러가 없습니다.');
+    } else {
+      print('에러가 있습니다.');
+    }
   }
 }
 
@@ -119,7 +146,12 @@ class _Content extends StatelessWidget {
 }
 
 class _SaveButton extends StatelessWidget {
-  const _SaveButton({Key? key}) : super(key: key);
+  final VoidCallback onPressed;
+
+  const _SaveButton({
+    required this.onPressed,
+    Key? key,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -128,7 +160,7 @@ class _SaveButton extends StatelessWidget {
         Expanded(
           child: ElevatedButton(
             // 버튼을 꽉차게 만드는 방법 여러가지 -> Row로 감싼 후 Expanded!
-            onPressed: () {},
+            onPressed: onPressed,
             style: ElevatedButton.styleFrom(
               primary: PRIMARY_COLOR,
             ),
