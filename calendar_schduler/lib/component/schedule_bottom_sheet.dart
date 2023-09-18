@@ -34,6 +34,7 @@ class _ScheduleBottomSheetState extends State<ScheduleBottomSheet> {
               padding: EdgeInsets.only(left: 8.0, right: 8.0, top: 16.0),
               child: Form(
                 //Form은 key라는 값을 넣어야함.
+                autovalidateMode: AutovalidateMode.always, // live로 validation하는 방법
                 key: formKey, // key에는 글로벌키를 넣어서 하나의 컨트롤러 역할 권한을 부여
                 child: Column(
                   //텍스트필드가 있는 하위보다 상위(아무데나)에 Form위젯을 설정하면 한번에 모든 텍스트필드들을 관리할 수 있다.
