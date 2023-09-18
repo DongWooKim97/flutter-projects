@@ -6,8 +6,11 @@ class CustomTextField extends StatelessWidget {
   final String label;
   final bool isTime;
 
-  const CustomTextField({required this.label, required this.isTime, Key? key})
-      : super(key: key);
+  const CustomTextField({
+    required this.label,
+    required this.isTime,
+    Key? key,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {

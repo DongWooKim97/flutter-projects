@@ -21,9 +21,10 @@ class ScheduleBottomSheet extends StatelessWidget {
           height: MediaQuery.of(context).size.height / 2 + bottomInset,
           color: Colors.white,
           child: Padding(
-            padding: EdgeInsets.only(left: 8.0, right: 8.0, top: 16.0),
+            padding: EdgeInsets.only(bottom: bottomInset),
             child: Padding(
-              padding: const EdgeInsets.all(8.0),
+
+              padding: EdgeInsets.only(left: 8.0, right: 8.0, top: 16.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
