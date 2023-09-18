@@ -26,14 +26,32 @@ part 'drift_database.g.dart';
 // 또한 private값인데 불러올 수 있는 이유는 part이기에!
 class LocalDatabase extends _$LocalDatabase {
   LocalDatabase() : super(_openConnection());
+
+  // insert하는 방법
+  Future<int> createSchedule(SchedulesCompanion data) =>
+      into(schedules).insert(data);
+
+  Future<int> createCategoryColor(CategoryColorsCompanion data) =>
+      into(categoryColors).insert(data);
+
+  // select하는 방법
+  Future<List<CategoryColor>> getCategoryColors() =>
+      select(categoryColors).get();
+
+  @override
+// 디비에 설정한 테이블들의 상태(상태버전)
+// 우리가 디비를 변경할 때 (구조자체가, 테이블 구조가 변경될 때) -> 스키마 버전을 높여줘야한다.
+  int get schemaVersion => 1;
 }
 
 // 데이터베이스를 어디에 저장할건지 지정.
 LazyDatabase _openConnection() {
   return LazyDatabase(
     () async {
-      final dbFolder =await getApplicationDocumentsDirectory(); // 플러터에서 지정해준, 프로바이더가 지정해준 디렉토리를 사용할 수 있는 위치
-      final file = File(p.join(dbFolder.path, 'db.sqlite')); // 그 위치에 db.sqlite라는 파일명으로 새로운 파일을 만듬.
+      final dbFolder =
+          await getApplicationDocumentsDirectory(); // 플러터에서 지정해준, 프로바이더가 지정해준 디렉토리를 사용할 수 있는 위치
+      final file = File(p.join(
+          dbFolder.path, 'db.sqlite')); // 그 위치에 db.sqlite라는 파일명으로 새로운 파일을 만듬.
       return NativeDatabase(file);
     },
   );
