@@ -36,6 +36,9 @@
       <excludeFolder url="file://$MODULE_DIR$/calendar_schduler/build" />
       <excludeFolder url="file://$MODULE_DIR$/calendar_schduler/.pub" />
       <excludeFolder url="file://$MODULE_DIR$/calendar_schduler/.dart_tool" />
+      <excludeFolder url="file://$MODULE_DIR$/ui_practice/build" />
+      <excludeFolder url="file://$MODULE_DIR$/ui_practice/.dart_tool" />
+      <excludeFolder url="file://$MODULE_DIR$/ui_practice/.pub" />
     </content>
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
