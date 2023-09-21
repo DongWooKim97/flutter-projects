@@ -9,18 +9,35 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  static final Map<String, Color> depthColors = {
+  static Map<String, Color> depthColors = {
     'LANDA': Colors.blue,
     'DEPVS': Colors.green,
     'DEPMS': Colors.purple,
     'DEPMD': Colors.yellow,
     'DEPDW': Colors.grey,
+    '1DEPDW': Colors.grey,
+    '2DEPDW': Colors.grey,
+    '3DEPDW': Colors.grey,
+    '4DEPDW': Colors.grey,
+    '41DEPDW': Colors.grey,
+    '42DEPDW': Colors.grey,
+    '43DEPDW': Colors.grey,
+    '44DEPDW': Colors.grey,
+    '4%DEPDW': Colors.grey,
+    '46DEPDW': Colors.grey,
+    '45DEPDW': Colors.grey,
   };
   bool _colorPickerVisible = false;
 
-  void _toggleColorPicker() {
+  void _show() {
     setState(() {
-      _colorPickerVisible = !_colorPickerVisible;
+      _colorPickerVisible = true;
+    });
+  }
+
+  void _hide() {
+    setState(() {
+      _colorPickerVisible = false;
     });
   }
 
@@ -28,34 +45,58 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
-        width: 300,
+        width: MediaQuery.of(context).size.width / 4,
         decoration: BoxDecoration(
-          border: Border.all(
-            color: Colors.black,
-            width: 2.0,
-          ),
-          borderRadius: BorderRadius.circular(2.0),
-        ),
+            border: Border.all(color: Colors.black),
+            borderRadius: BorderRadius.circular(2.0)),
         child: Column(
           children: [
-            ListView.builder(
-              scrollDirection: Axis.vertical,
-              shrinkWrap: true,
-              itemCount: depthColors.length,
-              itemBuilder: (context, index) {
-                final depthKey = depthColors.keys.elementAt(index);
-                final depthValue = depthColors[depthKey];
-                return renderDepthItem(depthKey, depthValue!);
-              },
-            ),
-            const SizedBox(height: 300),
-            if (_colorPickerVisible)
-              ColorPicker(
-                pickerColor: Colors.black,
-                onColorChanged: (color) {
-                  print('헬로');
-                },
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Container(
+                decoration: BoxDecoration(border: Border.all(width: 1.0)),
+                height: MediaQuery.of(context).size.height / 3,
+                child: SingleChildScrollView(
+                  child: ListView.builder(
+                    scrollDirection: Axis.vertical,
+                    shrinkWrap: true,
+                    itemCount: depthColors.length,
+                    itemBuilder: (context, index) {
+                      String depthKey = depthColors.keys.elementAt(index);
+                      Color? depthValue = depthColors[depthKey];
+                      return renderDepthItem(depthKey, depthValue!);
+                    },
+                  ),
+                ),
               ),
+            ),
+            const SizedBox(height: 50),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                ElevatedButton(
+                  onPressed: () {
+                    print('저장');
+                  },
+                  style: ElevatedButton.styleFrom(
+                    minimumSize: const Size(80, 40),
+                  ),
+                  child: const Text('저장'),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    print('닫기');
+                  },
+                  style: ElevatedButton.styleFrom(
+                    minimumSize: const Size(80, 40),
+                  ),
+                  child: Text('닫기'),
+                ),
+              ],
+            ),
+            const Divider(color: Colors.black),
+            if (_colorPickerVisible)
+              Visibility(visible: true, child: _DepthColorPicker(selectedColor: Colors.red,)),
           ],
         ),
       ),
@@ -64,20 +105,55 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget renderDepthItem(String depthKey, Color depthValue) {
     return Padding(
-      padding: const EdgeInsets.all(8.0),
+      padding: const EdgeInsets.only(
+          left: 32.0, right: 32.0, bottom: 16.0, top: 16.0),
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(depthKey),
+          Text(
+            depthKey,
+            style: const TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
           const SizedBox(width: 20.0),
           ElevatedButton(
-            onPressed: _toggleColorPicker,
-            style: ElevatedButton.styleFrom(
-              backgroundColor: depthValue,
-            ),
+            onPressed: () => {!_colorPickerVisible ? _show() : _hide()},
+            style: ElevatedButton.styleFrom(backgroundColor: depthValue),
             child: null,
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _DepthColorPicker extends StatefulWidget {
+  final Color selectedColor;
+
+  const _DepthColorPicker({required this.selectedColor, super.key});
+
+  @override
+  State<_DepthColorPicker> createState() => _DepthColorPickerState();
+}
+
+class _DepthColorPickerState extends State<_DepthColorPicker> {
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      child: ColorPicker(
+        colorPickerWidth: MediaQuery.of(context).size.width / 12.5,
+        labelTypes: const [ColorLabelType.rgb],
+        paletteType: PaletteType.hsvWithHue,
+        pickerAreaHeightPercent: 1.2,
+        pickerColor: widget.selectedColor,
+        enableAlpha: true,
+        onColorChanged: (color) {
+          setState(() {
+
+          });
+        },
       ),
     );
   }
