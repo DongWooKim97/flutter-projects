@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
 
+import '../constant/depth_color.dart';
+
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
 
@@ -9,47 +11,8 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  static Map<String, Color> depthColors = {
-    'LANDA': Colors.blue,
-    'DEPVS': Colors.green,
-    'DEPMS': Colors.purple,
-    'DEPMD': Colors.yellow,
-    'LAN2DA': Colors.blue,
-    'DEP11VS': Colors.green,
-    'DEPM2S': Colors.purple,
-    'DEPM1D': Colors.yellow,
-    'LA6N2DA': Colors.blue,
-    'DE1P4VS': Colors.green,
-    'DEP5MS': Colors.purple,
-    'DE1PMD': Colors.yellow,
-    '1LANDA': Colors.blue,
-    'D2EPVS': Colors.green,
-    'D3EPMS': Colors.purple,
-    'DEP4MD': Colors.yellow,
-    'LAN52DA': Colors.blue,
-    'DEP161VS': Colors.green,
-    'DEPM782S': Colors.purple,
-    'DEPM19D': Colors.yellow,
-    'LA6N290DA': Colors.blue,
-    'DE1P4V123S': Colors.green,
-    'DEP5M512S': Colors.purple,
-    'DE1PMD2': Colors.yellow,
-  };
-
-  final List<bool> _colorPickerVisibleList =
-      List.filled(depthColors.length, false);
-
-  void _show(int index) {
-    setState(() {
-      _colorPickerVisibleList[index] = true;
-    });
-  }
-
-  void _hide(int index) {
-    setState(() {
-      _colorPickerVisibleList[index] = false;
-    });
-  }
+  final List<_DepthItemState> _depthItemStates =
+      List.generate(depthColors.length, (_) => _DepthItemState());
 
   @override
   Widget build(BuildContext context) {
@@ -58,8 +21,9 @@ class _HomeScreenState extends State<HomeScreen> {
         width: MediaQuery.of(context).size.width / 3,
         height: MediaQuery.of(context).size.height,
         decoration: BoxDecoration(
-            border: Border.all(color: Colors.black),
-            borderRadius: BorderRadius.circular(2.0)),
+          border: Border.all(color: Colors.black),
+          borderRadius: BorderRadius.circular(2.0),
+        ),
         child: SingleChildScrollView(
           child: Column(
             children: [
@@ -75,7 +39,14 @@ class _HomeScreenState extends State<HomeScreen> {
                       itemBuilder: (context, index) {
                         String depthKey = depthColors.keys.elementAt(index);
                         Color? depthValue = depthColors[depthKey];
-                        return renderDepthItem(depthKey, depthValue!, index);
+                        return _DepthItem(
+                          depthKey: depthKey,
+                          depthValue: depthValue!,
+                          state: _depthItemStates[index],
+                          onColorChanged: (color) {
+                            updateColor(depthKey, color);
+                          },
+                        );
                       },
                     ),
                   ),
@@ -88,10 +59,41 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget renderDepthItem(String depthKey, Color depthValue, int index) {
+  void updateColor(String depthKey, Color newColor) {
+    setState(() {
+      depthColors[depthKey] = newColor;
+    });
+  }
+}
+
+class _DepthItemState {
+  bool isColorPickerVisible = false;
+  Color currentColor = Colors.transparent;
+}
+
+class _DepthItem extends StatelessWidget {
+  final String depthKey;
+  final Color depthValue;
+  final _DepthItemState state;
+  final ValueChanged<Color> onColorChanged;
+
+  const _DepthItem({
+    required this.depthKey,
+    required this.depthValue,
+    required this.state,
+    required this.onColorChanged,
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(
-          left: 32.0, right: 32.0, bottom: 32.0, top: 32.0),
+        left: 32.0,
+        right: 32.0,
+        bottom: 32.0,
+        top: 32.0,
+      ),
       child: Container(
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -106,18 +108,14 @@ class _HomeScreenState extends State<HomeScreen> {
             const SizedBox(width: 20.0),
             ElevatedButton(
               onPressed: () {
-                _colorPickerVisibleList[index] ? _hide(index) : _show(index);
+                state.isColorPickerVisible = !state.isColorPickerVisible;
+                state.currentColor = depthValue;
+                if (state.isColorPickerVisible) {
+                  _showColorPicker(context);
+                }
               },
               style: ElevatedButton.styleFrom(backgroundColor: depthValue),
-              child: Visibility(
-                visible: _colorPickerVisibleList[index],
-                child: _DepthColorPicker(
-                  selectedColor: depthValue,
-                  onColorChanged: (color) {
-                    updateColor(depthKey, color);
-                  },
-                ),
-              ),
+              child: null,
             ),
           ],
         ),
@@ -125,35 +123,39 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  void updateColor(String depthKey, Color newColor) {
-    setState(() {
-      depthColors[depthKey] = newColor;
-    });
-  }
-}
-
-class _DepthColorPicker extends StatelessWidget {
-  final Color selectedColor;
-  final ValueChanged<Color> onColorChanged;
-
-  const _DepthColorPicker({
-    required this.selectedColor,
-    required this.onColorChanged,
-    Key? key,
-  }) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return SingleChildScrollView(
-      child: ColorPicker(
-        colorPickerWidth: 100,
-        labelTypes: const [ColorLabelType.rgb],
-        paletteType: PaletteType.hueWheel,
-        pickerAreaHeightPercent: 0.8,
-        pickerColor: selectedColor,
-        enableAlpha: true,
-        onColorChanged: onColorChanged,
-      ),
+  void _showColorPicker(BuildContext context) {
+    showDialog(
+      context: context,
+      builder: (_) {
+        return AlertDialog(
+          title: Text('Select Color for $depthKey'),
+          content: SingleChildScrollView(
+            child: ColorPicker(
+              colorPickerWidth: 300,
+              pickerColor: state.currentColor,
+              onColorChanged: (color) => {state.currentColor = color},
+              enableAlpha: true,
+              pickerAreaHeightPercent: 0.8,
+            ),
+          ),
+          actions: [
+            ElevatedButton(
+              onPressed: () {
+                onColorChanged(state.currentColor);
+                Navigator.of(context).pop();
+              },
+              child: const Icon(Icons.check),
+            ),
+            ElevatedButton(
+              style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+              child: const Icon(Icons.close),
+            ),
+          ],
+        );
+      },
     );
   }
 }
