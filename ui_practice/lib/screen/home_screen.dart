@@ -9,6 +9,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
+  bool colorPickerVisible = false;
   static final Map<String, Color> depthColors = {
     'LANDA': Colors.blue,
     'DEPVS': Colors.green,
@@ -16,17 +17,10 @@ class _HomeScreenState extends State<HomeScreen> {
     'DEPMD': Colors.yellow,
     'DEPDW': Colors.grey,
   };
-  bool _colorPickerVisible = false;
 
-  void _show() {
+  void updateColor(String key, Color newColor) {
     setState(() {
-      _colorPickerVisible = true;
-    });
-  }
-
-  void _hide() {
-    setState(() {
-      _colorPickerVisible = false;
+      depthColors[key] = newColor;
     });
   }
 
@@ -46,17 +40,16 @@ class _HomeScreenState extends State<HomeScreen> {
           children: [
             Container(
               height: MediaQuery.of(context).size.height / 3,
-              child: SingleChildScrollView(
-                child: ListView.builder(
-                  scrollDirection: Axis.vertical,
-                  shrinkWrap: true,
-                  itemCount: depthColors.length,
-                  itemBuilder: (context, index) {
-                    final depthKey = depthColors.keys.elementAt(index);
-                    final depthValue = depthColors[depthKey];
-                    return renderDepthItem(depthKey, depthValue!);
+              child: Column(
+                children: depthColors.entries.map(
+                  (colors) {
+                    return _DepthColorPicker(
+                      title: colors.key,
+                      color: colors.value,
+                      updateColor: updateColor,
+                    );
                   },
-                ),
+                ).toList(),
               ),
             ),
             const SizedBox(height: 100),
@@ -69,8 +62,29 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
+}
 
-  Widget renderDepthItem(String depthKey, Color depthValue) {
+class _DepthColorPicker extends StatefulWidget {
+  final String title;
+  final Color color;
+  final Function(String, Color) updateColor;
+
+  const _DepthColorPicker({
+    required this.title,
+    required this.color,
+    required this.updateColor,
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  State<_DepthColorPicker> createState() => _DepthColorPickerState();
+}
+
+class _DepthColorPickerState extends State<_DepthColorPicker> {
+  bool colorPickerVisible = false;
+
+  @override
+  Widget build(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.only(
           left: 32.0, right: 32.0, bottom: 16.0, top: 16.0),
@@ -78,7 +92,7 @@ class _HomeScreenState extends State<HomeScreen> {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Text(
-            depthKey,
+            widget.title,
             style: const TextStyle(
               fontSize: 20,
               fontWeight: FontWeight.w600,
@@ -86,9 +100,20 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
           const SizedBox(width: 20.0),
           ElevatedButton(
-            onPressed: _DepthColorPicker(colorPickerVisible: _colorPickerVisible),
+            onPressed: () {
+              if (!colorPickerVisible) {
+                setState(() {
+                  colorPickerVisible = true;
+                });
+              } else {
+                setState(() {
+                  colorPickerVisible = false;
+                });
+              }
+              renderColorPicker(!colorPickerVisible);
+            },
             style: ElevatedButton.styleFrom(
-              backgroundColor: depthValue,
+              backgroundColor: widget.color,
             ),
             child: null,
           ),
@@ -96,22 +121,10 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
     );
   }
-}
 
-class _DepthColorPicker extends StatefulWidget {
-  final bool colorPickerVisible;
-
-  const _DepthColorPicker({required this.colorPickerVisible, super.key});
-
-  @override
-  State<_DepthColorPicker> createState() => _DepthColorPickerState();
-}
-
-class _DepthColorPickerState extends State<_DepthColorPicker> {
-  @override
-  Widget build(BuildContext context) {
+  Widget renderColorPicker(bool isVisible) {
     return Visibility(
-      visible: true,
+      visible: isVisible,
       child: SingleChildScrollView(
         child: ColorPicker(
           colorPickerWidth: MediaQuery.of(context).size.width / 12.5,
@@ -129,8 +142,6 @@ class _DepthColorPickerState extends State<_DepthColorPicker> {
   }
 }
 
-
-
 /*
 
 ElevatedButton(
@@ -140,4 +151,66 @@ ElevatedButton(
             ),
             child: null,
           ),
+ */
+
+/*
+
+                  // child: ListView.builder(
+                  //   scrollDirection: Axis.vertical,
+                  //   shrinkWrap: true,
+                  //   itemCount: depthColors.length,
+                  //   itemBuilder: (context, index) {
+                  //     final depthKey = depthColors.keys.elementAt(index);
+                  //     final depthValue = depthColors[depthKey];
+                  //     return renderDepthItem(depthKey, depthValue!);
+                  //   },
+                  // ),
+ */
+
+/*
+return Visibility(
+      visible: true,
+      child: SingleChildScrollView(
+        child: ColorPicker(
+          colorPickerWidth: MediaQuery.of(context).size.width / 12.5,
+          labelTypes: const [ColorLabelType.rgb],
+          paletteType: PaletteType.hsvWithHue,
+          pickerAreaHeightPercent: 1.2,
+          pickerColor: Colors.black,
+          enableAlpha: true,
+          onColorChanged: (color) {
+            print('헬로');
+          },
+        ),
+      ),
+    );
+ */
+
+/*
+Widget renderDepthItem(String depthKey, Color depthValue) {
+    return Padding(
+      padding: const EdgeInsets.only(
+          left: 32.0, right: 32.0, bottom: 16.0, top: 16.0),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Text(
+            depthKey,
+            style: const TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.w600,
+            ),
+          ),
+          const SizedBox(width: 20.0),
+          ElevatedButton(
+            onPressed: () {},
+            style: ElevatedButton.styleFrom(
+              backgroundColor: depthValue,
+            ),
+            child: null,
+          ),
+        ],
+      ),
+    );
+  }
  */
