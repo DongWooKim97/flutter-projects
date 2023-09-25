@@ -17,44 +17,54 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        width: MediaQuery.of(context).size.width / 3,
-        height: MediaQuery.of(context).size.height,
-        decoration: BoxDecoration(
-          border: Border.all(color: Colors.black),
-          borderRadius: BorderRadius.circular(2.0),
-        ),
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Container(
-                  decoration: BoxDecoration(border: Border.all(width: 1.0)),
-                  child: SingleChildScrollView(
-                    child: ListView.builder(
-                      scrollDirection: Axis.vertical,
-                      shrinkWrap: true,
-                      itemCount: depthColors.length,
-                      itemBuilder: (context, index) {
-                        String depthKey = depthColors.keys.elementAt(index);
-                        Color? depthValue = depthColors[depthKey];
-                        return _DepthItem(
-                          depthKey: depthKey,
-                          depthValue: depthValue!,
-                          state: _depthItemStates[index],
-                          onColorChanged: (color) {
-                            updateColor(depthKey, color);
+      body: Stack(
+        children: [
+          Container(
+            color: Colors.blue,
+          ),
+          Container(
+
+
+            width: MediaQuery.of(context).size.width / 3,
+            height: MediaQuery.of(context).size.height,
+            decoration: BoxDecoration(
+              color: Colors.white.withOpacity(0.9), // 투명도 설정
+              border: Border.all(color: Colors.black),
+              borderRadius: BorderRadius.circular(2.0),
+            ),
+            child: SingleChildScrollView(
+              child: Column(
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Container(
+                      decoration: BoxDecoration(border: Border.all(width: 1.0)),
+                      child: SingleChildScrollView(
+                        child: ListView.builder(
+                          scrollDirection: Axis.vertical,
+                          shrinkWrap: true,
+                          itemCount: depthColors.length,
+                          itemBuilder: (context, index) {
+                            String depthKey = depthColors.keys.elementAt(index);
+                            Color? depthValue = depthColors[depthKey];
+                            return _DepthItem(
+                              depthKey: depthKey,
+                              depthValue: depthValue!,
+                              state: _depthItemStates[index],
+                              onColorChanged: (color) {
+                                updateColor(depthKey, color);
+                              },
+                            );
                           },
-                        );
-                      },
+                        ),
+                      ),
                     ),
                   ),
-                ),
+                ],
               ),
-            ],
-          ),
-        ),
+            ),
+          )
+        ],
       ),
     );
   }
@@ -62,6 +72,7 @@ class _HomeScreenState extends State<HomeScreen> {
   void updateColor(String depthKey, Color newColor) {
     setState(() {
       depthColors[depthKey] = newColor;
+      print(newColor.value.toRadixString(16).substring(2).toUpperCase());
     });
   }
 }

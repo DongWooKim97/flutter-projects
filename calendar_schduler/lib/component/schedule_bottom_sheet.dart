@@ -1,6 +1,10 @@
 import 'package:calendar_schduler/component/custom_text_field.dart';
 import 'package:calendar_schduler/constant/colors.dart';
+import 'package:calendar_schduler/database/drift_database.dart';
+import 'package:calendar_schduler/model/category_color.dart';
 import 'package:flutter/material.dart';
+import 'package:get_it/get_it.dart';
+import 'package:calendar_schduler/database/drift_database.dart';
 
 // Form의 Key라는 State를 관리해야 하니까 Stateful로 변경
 class ScheduleBottomSheet extends StatefulWidget {
@@ -61,7 +65,16 @@ class _ScheduleBottomSheetState extends State<ScheduleBottomSheet> {
                       },
                     ),
                     SizedBox(height: 16.0),
-                    _ColorPicker(),
+                    FutureBuilder<List<CategoryColor>>(
+                      // GetIt을 통해 dependencies Injection을 하는 방법을 배웠다. 근데 이게 DI인지 모르겠음 ㅋㅎ.
+                      future: GetIt.I<LocalDatabase>().getCategoryColors(), // 마치 데이터베이스를 가져온것 처럼 다른 함수들을 모조리 사용할 수 있다 .
+                      builder: (context, snapshot) {
+                        print(snapshot.data);
+                        return _ColorPicker(
+                          colors: [],
+                        );
+                      },
+                    ),
                     SizedBox(height: 8.0),
                     _SaveButton(
                       onPressed: onSavePressed,
@@ -91,7 +104,12 @@ class _ScheduleBottomSheetState extends State<ScheduleBottomSheet> {
 }
 
 class _ColorPicker extends StatelessWidget {
-  const _ColorPicker({Key? key}) : super(key: key);
+  final List<Color> colors;
+
+  const _ColorPicker({
+    required this.colors,
+    Key? key,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -99,15 +117,7 @@ class _ColorPicker extends StatelessWidget {
       // 파라미터 - spacing
       spacing: 8.0, // 좌우 관격
       runSpacing: 10.0, // 위아래 간격
-      children: [
-        renderColor(Colors.red),
-        renderColor(Colors.orange),
-        renderColor(Colors.yellow),
-        renderColor(Colors.green),
-        renderColor(Colors.blue),
-        renderColor(Colors.indigo),
-        renderColor(Colors.purple),
-      ],
+      children: colors.map((e) => renderColor(e)).toList(),
     );
   }
 
