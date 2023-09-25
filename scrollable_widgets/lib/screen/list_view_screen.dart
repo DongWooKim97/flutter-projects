@@ -15,6 +15,7 @@ class ListViewScreen extends StatelessWidget {
     );
   }
 
+  // 3 => 2 + 중간 중간에 추가할 위젯을 넣을 수 있음
   Widget renderSeparate() {
     return ListView.separated(
       itemCount: 100,
@@ -33,6 +34,7 @@ class ListViewScreen extends StatelessWidget {
     );
   }
 
+  // 2- > 보이는 것만 그림
   Widget renderBuilder() {
     return ListView.builder(
       itemBuilder: (context, index) {
@@ -44,6 +46,8 @@ class ListViewScreen extends StatelessWidget {
     );
   }
 
+  // 1 .기본
+  // 모든 위젯을 한번에 그려버림.
   Widget renderContainer({
     required Color color,
     required int index,
@@ -66,8 +70,6 @@ class ListViewScreen extends StatelessWidget {
     );
   }
 }
-
-
 
 //ListView.separated 는 결국 List사이에 구분선같은 역할을 하는 것들을 넣어줄 수 있는
 // separateBuilder가 있다.  이 builder또한 기존의 builder를 작성하는 것처럼 작성할 수 있다.
