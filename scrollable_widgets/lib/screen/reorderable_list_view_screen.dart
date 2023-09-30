@@ -17,22 +17,49 @@ class _ReorderableListViewScreenState extends State<ReorderableListViewScreen> {
   Widget build(BuildContext context) {
     return MainLayout(
       title: 'ReorderableListViewScreen',
-      body: ReorderableListView( // 각각 유니크한 값을 지정해줘야함.
-        children: numbers
-            .map((e) => renderContainer(
-                color: rainbowColors[e % rainbowColors.length], index: e))
-            .toList(),
+      body: ReorderableListView.builder(
+        itemBuilder: (context, index) {
+          return renderContainer(
+            // 인덱스값을 그대로 사용하면 ,우리가 인덱스값을 그대로 받아서 사용하고 있기 때문에,
+            // 순서를 바꾸더라도 원래 색상과 컬러가 그대로 돌아옴. 그래서 인덱스의 값을 사용해야함
+              color: rainbowColors[numbers[index] % rainbowColors.length], index: numbers[index]);
+        },
+        itemCount: numbers.length,
         onReorder: (int oldIndex, int newIndex) {
-          setState(() {
+          setState(
+            () {
+              if (oldIndex < newIndex) {
+                newIndex -= 1;
+              }
+              final item = numbers.removeAt(oldIndex);
+              numbers.insert(newIndex, item);
+            },
+          );
+        },
+      ),
+    );
+  }
+
+  Widget renderDefault() {
+    return ReorderableListView(
+      // 각각 유니크한 값을 지정해줘야함.
+      children: numbers
+          .map((e) => renderContainer(
+                color: rainbowColors[e % rainbowColors.length],
+                index: e,
+              ))
+          .toList(),
+      onReorder: (int oldIndex, int newIndex) {
+        setState(
+          () {
             if (oldIndex < newIndex) {
               newIndex -= 1;
             }
-
             final item = numbers.removeAt(oldIndex);
             numbers.insert(newIndex, item);
-          });
-        },
-      ),
+          },
+        );
+      },
     );
   }
 
@@ -43,6 +70,7 @@ class _ReorderableListViewScreenState extends State<ReorderableListViewScreen> {
   }) {
     print(index);
     return Container(
+      key: Key(index.toString()),
       height: height ?? 300,
       color: color,
       child: Center(
@@ -83,3 +111,6 @@ class _ReorderableListViewScreenState extends State<ReorderableListViewScreen> {
 // [yellow, red, orange]
 // 2번 인덱스에서 0번인덱스로 옮김.
 // 이 상황에서는 옮기고 나서도 0번 인덱스가 맞음!
+
+// Builder를 사용하지 않고, 기본 Constructor를 사용하면서 children에 한번에 넣으면 한번에모조리 빌드가된다. -> 0부터 100까지 한번에 렌더
+// Builder를 용하면 보이는 곳 까지만 빌더됨.
