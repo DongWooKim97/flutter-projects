@@ -1,6 +1,52 @@
 import 'package:flutter/material.dart';
 import 'package:scrollable_widgets/constant/colors.dart';
 
+// 반드시 4개의 오버라이드 메서드를 생성해야함.
+class _SliverFixedHeaderDelegate extends SliverPersistentHeaderDelegate {
+  final Widget child;
+  final double maxHeight;
+  final double minHeight;
+
+  _SliverFixedHeaderDelegate({
+    required this.child,
+    required this.maxHeight,
+    required this.minHeight,
+  });
+
+  @override // 최대한 차지하게 하기
+  Widget build(
+      BuildContext context, double shrinkOffset, bool overlapsContent) {
+    return SizedBox.expand(
+      child: child,
+    );
+  }
+
+  @override
+  // TODO: implement maxExtent
+  // extent = 높이 (최대)
+  double get maxExtent => maxHeight;
+
+  @override
+  // TODO: implement minExtent
+  // extent = 높이 (최소)
+  double get minExtent => minHeight;
+
+  @override
+  // 파라미터 ? covariant - 상속된 클래스도 사용가능.
+  // oldDelegate? 오래된 Delegate. 어떤 상황이냐. 빌드함수가 어떤 상황에서도 실행된다고 치자.
+  // 빌드 되기 전에 존재하던 Delegate라고 생각하면됨.
+  // 빌드된 후 - newDelegate, 전 oldDelegate
+  // 새로 들어온 것 - this (새로운 Delegate)
+  // shouldRebuild - 새로 build를 해야할지 말지 결정
+  // 리턴값이 false면 빌드 절대 안함. true면 빌드 다시함.
+  // 특정 컨디션에 맞춰 빌드할지 말지를 결정해야함.
+  bool shouldRebuild(_SliverFixedHeaderDelegate oldDelegate) {
+    return oldDelegate.minHeight != minHeight ||
+        oldDelegate.maxHeight != maxHeight ||
+        oldDelegate.child != child;
+  }
+}
+
 class CustomScrollViewScreen extends StatelessWidget {
   final List<int> numbers = List.generate(100, (index) => index);
 
@@ -13,9 +59,34 @@ class CustomScrollViewScreen extends StatelessWidget {
         slivers: [
           // slivers안에는 무조건 Sliver관련 위젯만 들어가야한다. sliver키워드에 집착해야함.₩
           renderSliverAppBar(),
-          renderBuilderSliverList()
+          renderHeader(),
+          renderBuilderSliverList(),
+          renderHeader(),
+          renderBuilderSliverGrid(),
         ],
       ),
+    );
+  }
+
+  SliverPersistentHeader renderHeader() {
+    return SliverPersistentHeader(
+      pinned: true, // 헤더에 pinned를 설정해놓으면 헤더가 점점 쌓임.
+      delegate: _SliverFixedHeaderDelegate(
+        // 파라미터 3개
+        child: Container(
+          color: Colors.black,
+          child: const Center(
+            child: Text(
+              '신기하지',
+              style: TextStyle(
+                color: Colors.white,
+              ),
+            ),
+          ),
+        ),
+        minHeight: 150,
+        maxHeight: 200,
+      ), // 직접 Class를 생성해야함
     );
   }
 
@@ -140,3 +211,9 @@ class CustomScrollViewScreen extends StatelessWidget {
 // 어떤 형태로 SliverList를 만들어낼지 정할수있음.
 // ListView에도 ListView의 기본 생성자로 childrend에 때려박을 수도 있고,
 // ListView.Builder를 사용해서 만들어낼 수 있듯이 이러한 형태를 정하는게 delegate
+
+// SliverChildlitDelegate가 UI를 결정하는게 아니고 , 우리가 안에 넣게 되는
+// 파라미터가 실제로 이 리스트가 어떻게 보일지를 결정하는 것.!!
+
+// delegate는 어떤 역할을 하냐? 어떤 함수가 들어와야 하는지, 어떤 파라미터가 이 안에 들어와야 하는지
+// 정의만 하고있다. 용어 자체가 그런 의미. 함수의 포인터 수준?
