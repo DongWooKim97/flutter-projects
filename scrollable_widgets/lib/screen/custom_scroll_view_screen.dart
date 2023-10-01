@@ -11,9 +11,65 @@ class CustomScrollViewScreen extends StatelessWidget {
     return Scaffold(
       body: CustomScrollView(
         slivers: [
-          const SliverAppBar(title: Text('CustomScrollViewScreen')),
-          renderBuilderSliverList(),
+          // slivers안에는 무조건 Sliver관련 위젯만 들어가야한다. sliver키워드에 집착해야함.₩
+          renderSliverAppBar(),
+          renderBuilderSliverList()
         ],
+      ),
+    );
+  }
+
+  SliverAppBar renderSliverAppBar() {
+    return const SliverAppBar(
+      // false일 땐 맨 위로 올라가야지만 보이는데trueaㅕㄴ 중간에 올려도 보임.
+      floating: true,
+      // true일 땐 기본 AppBar를 구현했을 떄 나오는 방식. 완전고정
+      pinned: false,
+      // 자석처럼 조금만 이동해도 아래로 쭉 내려옴. false일 떈 중간에도 걸침. 한번 해보자.
+      // floting이 true일때만 사용할 수 있다.
+      snap: false,
+      // 맨 위에서 당겼을 떄 뒤에 Scaffold가 보임. 이걸 안보이게끔 하기위해
+      // Appbar를 늘리는거임. defalut = false
+      stretch: true,
+      // 늘어났을때 최대사이즈
+      expandedHeight: 200,
+      // 닫혀있을때 최소사이즈
+      collapsedHeight: 150,
+      flexibleSpace: FlexibleSpaceBar(
+        title: Text('FlexibleSpace'),
+      ),
+      title: Text('CustomScrollViewScreen'),
+    );
+  }
+
+// GridView.builder와 좀 비슷함.
+  SliverGrid renderBuilderSliverGrid() {
+    return SliverGrid(
+      delegate: SliverChildBuilderDelegate((context, index) {
+        return renderContainer(
+          color: rainbowColors[index % rainbowColors.length],
+          index: index,
+        );
+      }, childCount: 100),
+      gridDelegate: const SliverGridDelegateWithMaxCrossAxisExtent(
+        maxCrossAxisExtent: 150,
+      ),
+    );
+  }
+
+// GridView.count와 유사함
+  SliverGrid renderChildSliverGrid() {
+    return SliverGrid(
+      delegate: SliverChildListDelegate(numbers
+          .map(
+            (e) => renderContainer(
+              color: rainbowColors[e % rainbowColors.length],
+              index: e,
+            ),
+          )
+          .toList()),
+      gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+        crossAxisCount: 2,
       ),
     );
   }
